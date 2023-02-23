@@ -9,6 +9,7 @@
 #include <nav_msgs/Odometry.h>
 #include <ros/ros.h>
 #include <tf2_ros/static_transform_broadcaster.h>
+#include <tf2_ros/transform_listener.h>
 
 #include "odometry_transformer/OdometryTransformerConfig.h"
 
@@ -43,6 +44,11 @@ private:
 
   ros::NodeHandle nh_;
   ros::NodeHandle nh_private_;
+
+  tf2_ros::Buffer tf_buffer_;
+  tf2_ros::TransformListener tf_listener_;
+  bool lookup_tf_ = false;
+  bool last_lookup_failed_ = false;
 
   // SE(3) Calibration from odometry source to target.
   Eigen::Affine3d T_ST_ = Eigen::Affine3d::Identity();
