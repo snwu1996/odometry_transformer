@@ -39,7 +39,7 @@ void OdometryTransformer::getRosParameters() {
     tf2_ros::TransformListener tf_listener(tf_buffer);
     try {
       T_ST_ = tf2::transformToEigen(tf_buffer.lookupTransform(
-          source_frame_, target_frame_, ros::Time::now(), ros::Duration(1.0)));
+          source_frame_, target_frame_, ros::Time(0), ros::Duration(1.0)));
     } catch (tf2::TransformException &ex) {
       ROS_WARN("Cannot lookup transform: %s", ex.what());
     }
