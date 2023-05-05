@@ -3,14 +3,13 @@ project(odometry_transformer)
 
 find_package(catkin
   REQUIRED COMPONENTS
-  dynamic_reconfigure
-  geometry_msgs
+  roscpp
   nav_msgs
+  tf2_geometry_msgs
+  tf2_ros geometry_msgs
+  dynamic_reconfigure
   nodelet
   pluginlib
-  roscpp
-  tf2_geometry_msgs
-  tf2_ros
   )
 
 include_directories(include ${catkin_INCLUDE_DIRS})
@@ -22,19 +21,23 @@ generate_dynamic_reconfigure_options(cfg/OdometryTransformer.cfg)
 
 catkin_package()
 
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_BUILD_TYPE Release)
+
 #############
 # LIBRARIES #
 #############
-add_library(${PROJECT_NAME} src/${PROJECT_NAME}.cc
-                            src/${PROJECT_NAME}_nodelet.cc)
+add_library(${PROJECT_NAME} src/odometry_transformer.cc
+                            src/odometry_transformer_nodelet.cc)
 target_link_libraries(${PROJECT_NAME} ${catkin_LIBRARIES})
 
 ############
 # Binaries #
 ############
-add_executable(${PROJECT_NAME}_node src/${PROJECT_NAME}_node.cc)
-target_link_libraries(${PROJECT_NAME}_node ${PROJECT_NAME} ${catkin_LIBRARIES})
-add_dependencies(${PROJECT_NAME}_node ${PROJECT_NAME}_gencfg)
+add_executable(odometry_transformer_node src/odometry_transformer_node.cc)
+target_link_libraries(odometry_transformer_node ${PROJECT_NAME} ${catkin_LIBRARIES})
+add_dependencies(odometry_transformer_node ${PROJECT_NAME}_gencfg)
 
 add_executable(test_odometry_publisher test/test_odometry_publisher.cc)
 target_link_libraries(test_odometry_publisher ${catkin_LIBRARIES})
@@ -42,7 +45,7 @@ target_link_libraries(test_odometry_publisher ${catkin_LIBRARIES})
 ##########
 # EXPORT #
 ##########
-install(TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_node
+install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
